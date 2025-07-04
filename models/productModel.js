@@ -16,25 +16,26 @@ const Product = {
     db.query('INSERT INTO products SET ?', productData, callback);
   },
 
-  // Update produk
-  // updateProduct: (id, productData, callback) => {
-  //   db.query('UPDATE products SET ? WHERE id = ?', [productData, id], callback);
-  // },
-
   // Update produk berdasarkan ID
-updateProduct: (id, productData, callback) => {
-  if (!id) {
-    return callback(new Error('Product ID is required'), null);
-  }
-  if (!productData.name || !productData.price) {
-    return callback(new Error('Product name and price are required'), null);
-  }
+  updateProduct: (id, productData, callback) => {
+    if (!id) {
+      return callback(new Error('Product ID is required'), null);
+    }
+    if (!productData.name || !productData.price) {
+      return callback(new Error('Product name and price are required'), null);
+    }
 
-  const query = 'UPDATE products SET name = ?, price = ? WHERE id = ?';
-  const values = [productData.name, productData.price, id];
+    const query = 'UPDATE products SET name = ?, price = ? WHERE id = ?';
+    const values = [productData.name, productData.price, id];
 
-  db.query(query, values, callback);
-},
+    db.query(query, values, callback);
+  },
+
+  // Update gambar produk berdasarkan ID
+  updateProductImage: (id, imagePath, callback) => {
+    const query = 'UPDATE products SET image = ? WHERE id = ?';
+    db.query(query, [imagePath, id], callback);
+  },
 
   // Hapus produk
   deleteProduct: (id, callback) => {
@@ -51,11 +52,11 @@ updateProduct: (id, productData, callback) => {
     db.query('INSERT INTO products SET ?', productData, callback);
   },
 
-  // Update produk populer
+  // Update produk populer (termasuk is_popular)
   updatePopularProduct: (id, productData, callback) => {
-    const query = 'UPDATE products SET is_popular = ? WHERE id = ?';
-    const values = [productData.is_popular, id];
-  
+    const query = 'UPDATE products SET name = ?, price = ?, is_popular = ? WHERE id = ?';
+    const values = [productData.name, productData.price, productData.is_popular, id];
+
     db.query(query, values, callback);
   },   
 };

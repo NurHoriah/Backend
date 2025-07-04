@@ -21,30 +21,18 @@ exports.getProductById = (req, res) => {
 // Create product
 exports.createProduct = (req, res) => {
   const { name, price } = req.body;
-  const productData = { name, price, is_popular: 0 };  // Atur `is_popular` sesuai kebutuhan
+  const productData = { name, price, is_popular: 0 };
   Product.createProduct(productData, (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'Product created successfully' });
   });
 };
 
-// Update product
-// exports.updateProduct = (req, res) => {
-//   const { id, name, price } = req.body;
-//   const productData = { name, price };
-//   Product.updateProduct(id, productData, (err, result) => {
-//     if (err) return res.status(500).json({ error: err.message });
-//     res.json({ message: 'Product updated successfully' });
-//   });
-// };
-
 // Update product by ID
 exports.updateProduct = (req, res) => {
-  const { id } = req.params; // Ambil id dari parameter URL
-  const { name, price } = req.body; // Ambil data baru dari body
-
+  const { id } = req.params;
+  const { name, price } = req.body;
   const productData = { name, price };
-
   Product.updateProduct(id, productData, (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'Product updated successfully' });
@@ -71,28 +59,37 @@ exports.getPopularProducts = (req, res) => {
 // Create popular product
 exports.createPopularProduct = (req, res) => {
   const { name, price } = req.body;
-  const productData = { name, price, is_popular: 1 };  // Set is_popular ke 1 untuk produk populer
+  const productData = { name, price, is_popular: 1 };
   Product.createPopularProduct(productData, (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'Popular product created successfully' });
   });
 };
 
-// Update popular product (termasuk name, price, dan is_popular)
+// Update popular product (name, price, is_popular)
 exports.updatePopularProduct = (req, res) => {
   const { id, name, price, is_popular } = req.body;
+  if (!id) return res.status(400).json({ error: 'Product ID is required' });
+  if (!name) return res.status(400).json({ error: 'Product name is required' });
+  if (!price) return res.status(400).json({ error: 'Product price is required' });
+  if (typeof is_popular === 'undefined') return res.status(400).json({ error: 'is_popular is required' });
 
-  // Validasi jika id, name, price, atau is_popular tidak ada
-  // if (!id) return res.status(400).json({ error: 'Product ID is required' });
-  // if (!name) return res.status(400).json({ error: 'Product name is required' });
-  // if (!price) return res.status(400).json({ error: 'Product price is required' });
-  // if (typeof is_popular === 'undefined') return res.status(400).json({ error: 'is_popular is required' });
+  const productData = { name, price, is_popular };
+  Product.updatePopularProduct(id, productData, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Popular product updated successfully' });
+  });
+};
 
-  // const productData = { name, price, is_popular };
+// Upload image produk
+exports.uploadImage = (req, res) => {
+  const id = req.params.id;
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-  // Panggil model untuk update produk
-  // Product.updatePopularProduct(id, productData, (err, result) => {
-  //   if (err) return res.status(500).json({ error: err.message });
-  //   res.json({ message: 'Product updated successfully' });
-  // });
+  const imagePath = `/uploads/${req.file.filename}`; // path relatif, sesuaikan folder upload kamu
+
+  Product.updateProductImage(id, imagePath, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Image uploaded successfully', image: imagePath });
+  });
 };

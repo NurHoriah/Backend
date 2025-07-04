@@ -1,18 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
+const upload = require('../middleware/uploadMiddleware');
 
-// CRUD untuk semua produk
-router.get('/', productController.getAllProducts);  // /api/products
-router.get('/:id', productController.getProductById);  // /api/products/:id
-router.post('/', productController.createProduct);  // /api/products
-// router.put('/', productController.updateProduct);  // /api/products
-router.put('/:id', productController.updateProduct);  // /api/products/:id
-router.delete('/:id', productController.deleteProduct);  // /api/products/:id
+// Upload gambar produk
+router.post('/upload/:id', upload.single('image'), productController.uploadImage);
 
-// CRUD untuk produk populer
-router.get('/popular/all', productController.getPopularProducts);  // /api/products/popular/all
-router.post('/popular', productController.createPopularProduct);  // /api/products/popular
-router.put('/popular', productController.updatePopularProduct);  // /api/products/popular
+// CRUD produk populer
+router.get('/popular/all', productController.getPopularProducts);
+router.post('/popular', productController.createPopularProduct);
+router.put('/popular', productController.updatePopularProduct);
+
+// CRUD semua produk
+router.get('/', productController.getAllProducts);
+router.post('/', productController.createProduct);
+router.put('/:id', productController.updateProduct);
+router.delete('/:id', productController.deleteProduct);
+router.get('/:id', productController.getProductById);
 
 module.exports = router;
+
+router.post('/upload/:id', (req, res) => {
+  res.json({ message: `Upload route hit with id ${req.params.id}` });
+});
