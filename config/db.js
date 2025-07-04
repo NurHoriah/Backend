@@ -1,20 +1,14 @@
-require('dotenv').config(); // Pindahkan ini ke baris pertama!
-
 const mysql = require('mysql2');
-
-const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'crud_auth'
+const conn = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
-db.connect(err => {
-  if (err) {
-    console.error('Error connecting to database:', err);
-  } else {
-    console.log('Database connected');
-  }
+conn.connect(err => {
+  if (err) throw err;
+  console.log('Database connected');
 });
 
-module.exports = db;
+module.exports = conn;
